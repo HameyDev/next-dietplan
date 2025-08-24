@@ -21,6 +21,8 @@ export default function ClientForm() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [apiError, setApiError] = useState("");
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+
   const onSubmit = async (values) => {
     setApiError("");
 
@@ -72,7 +74,7 @@ export default function ClientForm() {
     };
 
     try {
-      const res = await fetch("/api/clients", {
+      const res = await fetch(`${baseUrl}/api/clients`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
