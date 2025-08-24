@@ -11,8 +11,10 @@ async function getClients({ q, page, limit }) {
   params.set("page", page);
   params.set("limit", limit);
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+
   // Include cookies/headers so auth session is forwarded
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/clients?` + params.toString(), {
+  const res = await fetch(`${baseUrl}/api/clients?` + params.toString(), {
     method: "GET",
     headers: {
       cookie: cookies().toString(),
