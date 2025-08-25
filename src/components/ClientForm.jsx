@@ -317,7 +317,7 @@ export default function ClientForm() {
         <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
         <input
           className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          placeholder="Client full name"
+          placeholder="Client Full Name"
           {...register("name", { required: "Name is required", minLength: 2 })}
         />
         {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>}
@@ -329,6 +329,7 @@ export default function ClientForm() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Age (years)</label>
           <input
             type="number" min="1"
+            placeholder="Age"
             className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             {...register("age", { required: "Age is required", valueAsNumber: true })}
           />
@@ -357,6 +358,7 @@ export default function ClientForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
               <input
                 type="number" min="10"
+                placeholder=`{label}`
                 className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 {...register(key, { required: true, valueAsNumber: true })}
               />
