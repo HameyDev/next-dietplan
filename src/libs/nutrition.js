@@ -51,14 +51,13 @@ export function calcDailyCalories({ tdee, goalType, currentWeight, goalWeight, t
  *  - Carbs:  remainder
  */
 export function calcMacros({ weightKg, dailyCalories }) {
-  const proteinG = Math.round(weightKg * 1.8);
-  const fatG = Math.round(weightKg * 0.8);
+  const proteinkCal = dailycalories * 0.3;
+  const fatKcal = dailyCalories * 0.3;
+  const carbskcal = dailyCalories * 0.4;
 
-  const kcalFromProtein = proteinG * 4;
-  const kcalFromFat = fatG * 9;
-  const kcalLeft = Math.max(dailyCalories - (kcalFromProtein + kcalFromFat), 0);
-  const carbsG = Math.round(kcalLeft / 4);
-
+  const proteinG = Math.round(proteinkCal / 4);
+  const fatG = Math.round(fatKcal / 9);
+  const carbsG = Math.round(carbsKcal / 4);
   return {
     proteins: proteinG,
     fats: fatG,
