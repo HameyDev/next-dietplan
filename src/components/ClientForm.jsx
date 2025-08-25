@@ -33,9 +33,9 @@ export default function ClientForm() {
     const height = Number(values.height);
     const weight = Number(values.weight);
     const goalWeight = Number(values.goalWeight);
-    const timeFrame = Number(values.timeframe);
+    const timeframe = Number(values.timeframe);
 
-    if ([age, height, weight, goalWeight, timeFrame].some(n => Number.isNaN(n) || n <= 0)) {
+    if ([age, height, weight, goalWeight, timeframe].some(n => Number.isNaN(n) || n <= 0)) {
       setApiError("Please enter valid positive numbers for age, height, weight and goal weight.");
       return;
     }
@@ -52,7 +52,7 @@ export default function ClientForm() {
       height,
       weight,
       goalWeight,
-      timeFrame,
+      timeframe,
       goalType: values.goalType,
       dietType: values.dietType,
       activityLevel: values.activityLevel,
