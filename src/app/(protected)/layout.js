@@ -14,8 +14,10 @@ export default async function ProtectedLayout({ children }) {
       <Navbar />
 
       {/* Main content takes all available space */}
-      <main className="flex-1 max-w-6xl mx-auto px-4 py-6">
-        {children}
+      <main className="flex-1 w-full px-4 py-6">
+        <div className="max-w-6xl mx-auto">
+          {children}
+        </div>
       </main>
 
       {/* Footer pushed to bottom */}
