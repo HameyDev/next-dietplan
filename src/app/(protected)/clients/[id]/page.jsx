@@ -53,7 +53,7 @@ export default async function ClientDetailPage({ params }) {
             <li><strong>Height:</strong> {client.height} cm</li>
             <li><strong>Weight:</strong> {client.weight} kg</li>
             <li><strong>Goal Weight:</strong> {client.goalWeight} kg</li>
-            <li><strong>Timeframe:</strong> {client.timeframe}</li>
+            <li><strong>Timeframe:</strong> {client.timeframe} days</li>
             <li><strong>Goal Type:</strong> {client.goalType}</li>
             <li><strong>Diet Type:</strong> {client.dietType}</li>
             <li><strong>Activity:</strong> {client.activityLevel}</li>
