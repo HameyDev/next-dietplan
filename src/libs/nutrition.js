@@ -30,7 +30,7 @@ export function calcDailyCalories({ tdee, goalType, currentWeight, goalWeight, t
   }
 
   // Weight difference (kg)
-  const weightDiffKg = currentWeight - goalWeight;
+  const weightDiffKg = goalWeight - currentWeight;
 
   // kcal needed (approx 7700 kcal per 1 kg)
   const totalKcalChange = weightDiffKg * 7700;
