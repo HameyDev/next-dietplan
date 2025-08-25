@@ -154,10 +154,11 @@ export default function ClientForm() {
 
       {/* Timeframe */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Timeframe</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Timeframe (Days)</label>
         <input
+          type="Number" min="7"
           className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          placeholder="e.g. 12 weeks"
+          placeholder="Days"
           {...register("timeframe", { required: true })}
         />
       </div>
