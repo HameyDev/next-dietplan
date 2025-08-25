@@ -300,7 +300,8 @@ export default function ClientForm() {
   };
 
   return (
-    <form
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <form
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white rounded-2xl border shadow-sm p-8 space-y-6 max-w-3xl"
     >
@@ -404,6 +405,7 @@ export default function ClientForm() {
         </button>
       </div>
     </form>
+    </div>
   );
 }
 
