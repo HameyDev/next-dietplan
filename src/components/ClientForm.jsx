@@ -359,7 +359,7 @@ export default function ClientForm() {
               <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
               <input
                 type="number" min="10"
-                placeholder=`{label}`
+                placeholder={label}
                 className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 {...register(key, { required: true, valueAsNumber: true })}
               />
