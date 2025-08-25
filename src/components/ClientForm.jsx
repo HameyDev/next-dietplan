@@ -43,7 +43,7 @@ export default function ClientForm() {
     const BMR = calcBMR({ gender: values.gender, weightKg: weight, heightCm: height, age });
     const TDEE = calcTDEE({ bmr: BMR, activityLevel: values.activityLevel });
     const dailyCalories = calcDailyCalories({ tdee: TDEE, goalType: values.goalType, currentWeight: weight, goalWeight: goalWeight, timeframeDays: timeframe });
-    const { proteins, fats, carbs } = calcMacros({ weightKg: weight, dailyCalories });
+    const { proteins, fats, carbs } = calcMacros({ weightKg: weight, dailyCalories: dailyCalories });
 
     const payload = {
       name: values.name.trim(),
