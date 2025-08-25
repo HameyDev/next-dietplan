@@ -39,7 +39,7 @@ export function calcDailyCalories({ tdee, goalType, currentWeight, goalWeight, t
   const dailyAdjustment = totalKcalChange / timeframeDays;
 
   // New target calories
-  const dailyCalories = Math.round(tdee - dailyAdjustment);
+  const dailyCalories = Math.round(tdee + dailyAdjustment);
 
   return Math.max(dailyCalories, 1200); // keep safe lower bound
 }
