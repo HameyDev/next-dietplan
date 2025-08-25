@@ -15,7 +15,9 @@ export default function Navbar() {
     return (
         <header className="bg-white border-b">
             <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-                <div className="font-bold text-lg text-black">Diet Admin</div>
+                <Link href="/dashboard" className="font-bold text-lg text-black hover:text-blue-600">
+                    Diet Admin
+                </Link>
                 <nav className="flex items-center gap-2">
                     <Link className={linkCls("/clients")} href="/clients">Clients</Link>
                     <Link className={linkCls("/clients/create")} href="/clients/create">Create Client</Link>
