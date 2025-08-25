@@ -2,7 +2,6 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Search } from "lucide-react"; // for search icon
 
 export default function SearchBar({ initialQuery = "" }) {
   const router = useRouter();
@@ -28,7 +27,6 @@ export default function SearchBar({ initialQuery = "" }) {
       onSubmit={onSubmit}
       className="flex w-full max-w-lg items-center rounded-2xl border border-gray-300 bg-white px-3 py-2 shadow-sm transition focus-within:ring-2 focus-within:ring-blue-500"
     >
-      <Search className="h-5 w-5 text-gray-400" />
       <input
         ref={inputRef}
         value={query}
