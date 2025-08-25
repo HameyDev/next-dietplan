@@ -87,7 +87,7 @@ export default function ClientForm() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white rounded-2xl border shadow-sm p-8 space-y-6 max-w-3xl"
+      className="bg-white rounded-2xl border shadow-sm p-8 space-y-2 max-w-3xl"
     >
       <h2 className="text-2xl font-bold text-gray-900">Create New Client</h2>
 
