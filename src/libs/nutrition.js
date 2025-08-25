@@ -21,10 +21,27 @@ export function calcTDEE({ bmr, activityLevel }) {
  * timeframe: free text, not used in math here (we’ll keep it for display)
  * dietType: not used in math here (you can use later to bias macros)
  */
-export function calcDailyCalories(tdee, goalType) {
-  if (goalType === "Fat Loss") return Math.round(tdee * 0.80);    // ~20% deficit
-  if (goalType === "Lean Gain") return Math.round(tdee * 1.10);   // ~10% surplus
-  return Math.round(tdee);                                        // Maintain
+export function calcDailyCalories({ tdee, goalType, currentWeight, goalWeight, timeframeDays }) {
+  // If no timeframe provided, fall back to % adjustments
+  if (!timeframeDays || timeframeDays <= 0) {
+    if (goalType === "Fat Loss") return Math.round(tdee * 0.80);    // ~20% deficit
+    if (goalType === "Lean Gain") return Math.round(tdee * 1.10);   // ~10% surplus
+    return Math.round(tdee);                                        // Maintain
+  }
+
+  // Weight difference (kg)
+  const weightDiffKg = currentWeight - goalWeight;
+
+  // kcal needed (approx 7700 kcal per 1 kg)
+  const totalKcalChange = weightDiffKg * 7700;
+
+  // Daily adjustment spread over timeframe
+  const dailyAdjustment = totalKcalChange / timeframeDays;
+
+  // New target calories
+  const dailyCalories = Math.round(tdee - dailyAdjustment);
+
+  return Math.max(dailyCalories, 1200); // keep safe lower bound
 }
 
 /**
