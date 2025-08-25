@@ -8,22 +8,34 @@ export default function Navbar() {
     const pathname = usePathname();
 
     const linkCls = (href) =>
-        `px-3 py-2 rounded-md text-sm font-medium ${
-            pathname === href ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-200"
+        `px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+            pathname === href 
+                ? "bg-blue-600 text-white shadow-md" 
+                : "text-gray-700 hover:bg-gray-100"
         }`;
 
     return (
-        <header className="bg-white border-b">
-            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-                <Link href="/dashboard" className="font-bold text-lg text-black hover:text-blue-600">
+        <header className="bg-white shadow-md sticky top-0 z-50">
+            <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                {/* Logo / Brand */}
+                <Link 
+                    href="/dashboard" 
+                    className="font-extrabold text-xl text-gray-900 tracking-wide hover:text-blue-600 transition-colors"
+                >
                     Diet Admin
                 </Link>
-                <nav className="flex items-center gap-2">
-                    <Link className={linkCls("/clients")} href="/clients">Clients</Link>
-                    <Link className={linkCls("/clients/create")} href="/clients/create">Create Client</Link>
-                    <button 
+
+                {/* Navigation */}
+                <nav className="flex items-center gap-4">
+                    <Link className={linkCls("/clients")} href="/clients">
+                        Clients
+                    </Link>
+                    <Link className={linkCls("/clients/create")} href="/clients/create">
+                        Create Client
+                    </Link>
+                    <button
                         onClick={() => signOut({ callbackUrl: "/login" })}
-                        className="ml-2 px-3 py-2 rounded-md text-sm font-medium bg-gray-900 text-white hover:opacity-90"
+                        className="ml-2 px-4 py-2 rounded-xl text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 shadow-md"
                     >
                         Logout
                     </button>
@@ -32,3 +44,4 @@ export default function Navbar() {
         </header>
     );
 }
+
