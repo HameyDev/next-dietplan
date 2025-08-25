@@ -52,7 +52,7 @@ export default function ClientForm() {
       height,
       weight,
       goalWeight,
-      timeframe,
+      timeFrame,
       goalType: values.goalType,
       dietType: values.dietType,
       activityLevel: values.activityLevel,
