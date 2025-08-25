@@ -29,7 +29,7 @@ const ClientSchema = new mongoose.Schema(
     height: { type: Number, required: true }, // cm
     weight: { type: Number, required: true }, // kg
     goalWeight: { type: Number, required: true }, // kg
-    timeframe: { type: String, required: true }, // e.g. "8 weeks"
+    timeframe: { type: Number, required: true }, // e.g. "8 weeks"
     goalType: { type: String, required: true }, // e.g. "Fat Loss", "Lean Gain"
     dietType: { type: String, required: true }, // e.g. "Keto", "Balanced", "Veg"
     activityLevel: {
