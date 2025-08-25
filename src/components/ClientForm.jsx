@@ -33,15 +33,16 @@ export default function ClientForm() {
     const height = Number(values.height);
     const weight = Number(values.weight);
     const goalWeight = Number(values.goalWeight);
+    const timeFrame = Number(values.timeframe);
 
-    if ([age, height, weight, goalWeight].some(n => Number.isNaN(n) || n <= 0)) {
+    if ([age, height, weight, goalWeight, timeFrame].some(n => Number.isNaN(n) || n <= 0)) {
       setApiError("Please enter valid positive numbers for age, height, weight and goal weight.");
       return;
     }
 
     const BMR = calcBMR({ gender: values.gender, weightKg: weight, heightCm: height, age });
     const TDEE = calcTDEE({ bmr: BMR, activityLevel: values.activityLevel });
-    const dailyCalories = calcDailyCalories(TDEE, values.goalType);
+    const dailyCalories = calcDailyCalories(TDEE, values.goalType, weight, goalWeight, timeFrame);
     const { proteins, fats, carbs } = calcMacros({ weightKg: weight, dailyCalories });
 
     const payload = {
@@ -51,7 +52,7 @@ export default function ClientForm() {
       height,
       weight,
       goalWeight,
-      timeframe: values.timeframe.trim(),
+      timeframe,
       goalType: values.goalType,
       dietType: values.dietType,
       activityLevel: values.activityLevel,
