@@ -48,7 +48,7 @@ export default async function ClientsPage({ searchParams }) {
         <h1 className="text-2xl font-semibold">Clients</h1>
         <Link
           href="/clients/create"
-          className="inline-flex items-center rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="inline-flex items-center rounded-xl bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           + Create Client
         </Link>
