@@ -34,15 +34,47 @@ export default function ClientsTable({ items = [], page, limit, total }) {
   };
 
   const handlePDF = async (id) => {
-    const res = await fetch(`/api/pdf?clientId=${id}`);
-    if (res.status === 501) {
-      alert("PDF generation will be available later (placeholder now).");
-      return;
-    }
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      alert(data?.error || "Failed to generate PDF");
-      return;
+    try {
+      const res = await fetch(`/api/pdf?clientId=${id}`);
+
+      if (res.status === 401) {
+        alert("Unauthorized. Please login.");
+        return;
+      }
+
+      if (!res.ok) {
+        let errorMsg = "Failed to generate PDF";
+        try {
+          const data = await res.json();
+          errorMsg = data?.error || data?.message || errorMsg;
+        } catch {
+          // response not JSON
+        }
+        throw new Error(errorMsg);
+      }
+
+      // ✅ only parse blob if successful
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+
+      // try to parse filename from headers
+      const cd = res.headers.get("Content-Disposition");
+      let filename = "diet-plan.pdf";
+      if (cd) {
+        const match = cd.match(/filename="?([^"]+)"?/);
+        if (match) filename = match[1];
+      }
+      a.download = filename;
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(err.message || "Error generating PDF");
     }
   };
 
@@ -62,10 +94,7 @@ export default function ClientsTable({ items = [], page, limit, total }) {
         <tbody>
           {items.length === 0 && (
             <tr>
-              <td
-                colSpan={6}
-                className="px-4 py-8 text-center text-gray-500"
-              >
+              <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                 No clients found.
               </td>
             </tr>

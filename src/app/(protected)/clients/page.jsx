@@ -2,31 +2,40 @@ import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import SearchBar from "@/components/SearchBar";
 import ClientsTable from "@/components/ClientsTable";
-import Pagination  from "@/components/Pagination";
+import Pagination from "@/components/Pagination";
 
+// ✅ make it async and await cookies/headers
 async function getClients({ q, page, limit }) {
-  // Build query string
+  // build query string
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   params.set("page", page);
   params.set("limit", limit);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXTAUTH_URL ||
+    "http://localhost:3000";
 
-  // Include cookies/headers so auth session is forwarded
+  // ✅ await cookies() and headers()
+  const cookieStore = await cookies();
+  const headersList = await headers();
+
   const res = await fetch(`${baseUrl}/api/clients?` + params.toString(), {
     method: "GET",
     headers: {
-      cookie: cookies().toString(),
-      "x-forwarded-host": headers().get("x-forwarded-host") || "",
-      "x-forwarded-proto": headers().get("x-forwarded-proto") || "",
+      cookie: cookieStore.toString(),
+      "x-forwarded-host": headersList.get("x-forwarded-host") || "",
+      "x-forwarded-proto": headersList.get("x-forwarded-proto") || "",
     },
     cache: "no-store",
   });
 
   if (!res.ok) {
-    // If running locally without NEXT_PUBLIC_BASE_URL, fallback to relative fetch
-    const rel = await fetch(`/api/clients?` + params.toString(), { cache: "no-store" }).catch(() => null);
+    // fallback to relative fetch
+    const rel = await fetch(`/api/clients?` + params.toString(), {
+      cache: "no-store",
+    }).catch(() => null);
     if (!rel || !rel.ok) throw new Error("Failed to load clients");
     return rel.json();
   }
@@ -35,9 +44,12 @@ async function getClients({ q, page, limit }) {
 }
 
 export default async function ClientsPage({ searchParams }) {
-  const q = (searchParams?.q ?? "").trim();
-  const page = Number(searchParams?.page ?? 1) || 1;
-  const limit = Number(searchParams?.limit ?? 10) || 10;
+  // ✅ searchParams is async in app router → await it
+  const resolvedParams = await searchParams;
+
+  const q = (resolvedParams?.q ?? "").trim();
+  const page = Number(resolvedParams?.page ?? 1) || 1;
+  const limit = Number(resolvedParams?.limit ?? 10) || 10;
 
   const data = await getClients({ q, page, limit });
   const { items, total } = data;
@@ -57,10 +69,22 @@ export default async function ClientsPage({ searchParams }) {
       <SearchBar initialQuery={q} />
 
       <div className="rounded-lg border bg-white">
-        <ClientsTable items={items} q={q} page={page} limit={limit} total={total} />
+        <ClientsTable
+          items={items}
+          q={q}
+          page={page}
+          limit={limit}
+          total={total}
+        />
       </div>
 
-      <Pagination page={page} limit={limit} total={total} basePath="/clients" q={q} />
+      <Pagination
+        page={page}
+        limit={limit}
+        total={total}
+        basePath="/clients"
+        q={q}
+      />
     </div>
   );
 }
