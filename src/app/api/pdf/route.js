@@ -30,11 +30,27 @@ export async function createPDFBuffer(client) {
   const timesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
   // ---- HEADER ----
-  const headerHeight = 60;
-  page.drawRectangle({ x: 0, y: pageHeight - headerHeight, width: pageWidth, height: headerHeight, color: rgb(0.2, 0.55, 0.9) });
-  page.drawText("Diet Plan", { x: leftColX, y: pageHeight - 40, size: 24, font: timesRomanBold, color: rgb(1, 1, 1) });
-  page.drawText(client.name || "-", { x: leftColX + 160, y: pageHeight - 42, size: 18, font: timesRomanBold, color: rgb(1, 1, 1) });
-  y -= headerHeight + 20;
+const headerHeight = 80; // taller header for logo + info
+page.drawRectangle({ x: 0, y: pageHeight - headerHeight, width: pageWidth, height: headerHeight, color: rgb(0.2, 0.55, 0.9) });
+
+// Draw Logo (example: small square for placeholder, replace with actual image later)
+const logoSize = 50;
+// If you have a base64 or Uint8Array of the logo:
+// const logoImage = await pdfDoc.embedPng(logoBytes);
+// page.drawImage(logoImage, { x: leftColX, y: pageHeight - 60, width: logoSize, height: logoSize });
+page.drawRectangle({ x: leftColX, y: pageHeight - 60, width: logoSize, height: logoSize, color: rgb(1, 1, 1) }); // placeholder
+
+// Draw Title
+page.drawText("Diet Plan", { x: leftColX + 70, y: pageHeight - 35, size: 24, font: timesRomanBold, color: rgb(1, 1, 1) });
+
+// Draw Your Name
+page.drawText("Dr. Laiba Noor", { x: leftColX + 70, y: pageHeight - 55, size: 16, font: timesRomanBold, color: rgb(1, 1, 1) });
+
+// Draw Instagram Info
+page.drawText("@your_instagram_handle", { x: leftColX + 70, y: pageHeight - 70, size: 12, font: timesRoman, color: rgb(1, 1, 1) });
+
+y -= headerHeight + 20;
+
 
   // ---- CLIENT INFO & TARGETS BOX ----
   const clientInfo = [
