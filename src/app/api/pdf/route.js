@@ -16,33 +16,32 @@ function checkY(pdfDoc, page, y, minY = 100) {
   return { page, y };
 }
 
-async function createPDFBuffer(client) {
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+
+export async function createPDFBuffer(client) {
   const pdfDoc = await PDFDocument.create();
-  let page = pdfDoc.addPage([595, 842]); // A4
+  let page = pdfDoc.addPage([595, 842]); // A4 size
   let y = 800;
   const leftColX = 40;
-  const rightColX = 320;
+  const rowHeight = 18;
 
   const timesRoman = await pdfDoc.embedFont(StandardFonts.TimesRoman);
   const timesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
-  const rowHeight = 18;
-  const tableGap = 5;
-
-  // ---- Header ----
+  // ---- HEADER ----
   page.drawRectangle({ x: 0, y: 780, width: 595, height: 60, color: rgb(0.2, 0.55, 0.9) });
   page.drawText("Diet Plan", { x: 40, y: 800, size: 24, font: timesRomanBold, color: rgb(1, 1, 1) });
   page.drawText(client.name || "-", { x: 200, y: 800, size: 18, font: timesRomanBold, color: rgb(1, 1, 1) });
   y -= 80;
 
-  // ---- Client Info Box ----
+  // ---- CLIENT INFO BOX ----
   page.drawRectangle({ x: leftColX - 10, y: y - 10, width: 515, height: 140, color: rgb(0.95, 0.95, 0.95) });
   page.drawText("Client Information", { x: leftColX, y: y + 100, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
 
   const clientInfo = [
     ["Name", client.name], ["Age", client.age],
-    ["Gender", client.gender], ["Height", client.height + " cm"],
-    ["Weight", client.weight + " kg"], ["Goal Weight", client.goalWeight + " kg"],
+    ["Gender", client.gender], ["Height", client.height ? client.height + " cm" : "-"],
+    ["Weight", client.weight ? client.weight + " kg" : "-"], ["Goal Weight", client.goalWeight ? client.goalWeight + " kg" : "-"],
     ["Goal", client.goalType], ["Diet Type", client.dietType],
     ["Activity", client.activityLevel], ["Timeframe", client.timeframe]
   ];
@@ -50,59 +49,64 @@ async function createPDFBuffer(client) {
   clientInfo.forEach(([label, val], i) => {
     const rowY = y + 80 - i * rowHeight;
     page.drawText(`${label}:`, { x: leftColX, y: rowY, size: 11, font: timesRoman });
-    page.drawText(val || "-", { x: leftColX + 100, y: rowY, size: 11, font: timesRomanBold });
+    page.drawText(String(val || "-"), { x: leftColX + 100, y: rowY, size: 11, font: timesRomanBold });
   });
 
   y -= 160;
 
-  // ---- Targets Box ----
+  // ---- TARGETS BOX ----
   page.drawRectangle({ x: leftColX - 10, y: y - 10, width: 515, height: 60, color: rgb(0.9, 0.95, 1) });
   page.drawText("Targets", { x: leftColX, y: y + 30, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
+
   const targets = [
     ["BMR", client.BMR], ["TDEE", client.TDEE],
     ["Calories", client.dailyCalories], ["Protein", client.proteins],
     ["Fats", client.fats], ["Carbs", client.carbs]
   ];
+
   targets.forEach(([label, val], i) => {
-    page.drawText(`${label}: ${val || 0}`, { x: leftColX + i * 90, y: y + 10, size: 11, font: timesRoman });
+    page.drawText(`${label}: ${String(val || 0)}`, { x: leftColX + i * 90, y: y + 10, size: 11, font: timesRoman });
   });
 
   y -= 80;
 
-  // ---- Meal Plan Table ----
+  // ---- WEEKLY MEAL PLAN TABLE ----
   const mealPlan = Array.isArray(client.mealPlan) ? client.mealPlan : [];
   page.drawText("Weekly Meal Plan", { x: leftColX, y, size: 16, font: timesRomanBold, color: rgb(0.2, 0.55, 0.9) });
   y -= 25;
 
   const tableHeaders = ["Meal Type", "Calories", "Protein", "Fats", "Carbs", "Items"];
-
-  // Draw headers
   tableHeaders.forEach((h, i) => {
     page.drawText(h, { x: leftColX + i * 80, y, size: 11, font: timesRomanBold });
   });
-  y -= 18;
+  y -= rowHeight;
 
   mealPlan.forEach((day, d) => {
-    // Day label
     page.drawText(day.day || `Day ${d + 1}`, { x: leftColX, y, size: 12, font: timesRomanBold, color: rgb(0.2, 0.55, 0.9) });
     y -= rowHeight;
 
     (day.meals || []).forEach((meal, i) => {
-      // Alternate row background
       if (i % 2 === 0) page.drawRectangle({ x: leftColX - 5, y: y - 5, width: 515, height: rowHeight, color: rgb(0.95, 0.95, 1) });
-      page.drawText(meal.mealType || "Meal", { x: leftColX, y, size: 10, font: timesRoman });
+
+      page.drawText(String(meal.mealType || "Meal"), { x: leftColX, y, size: 10, font: timesRoman });
       page.drawText(String(meal.calories || 0), { x: leftColX + 80, y, size: 10, font: timesRoman });
       page.drawText(String(meal.protein || 0), { x: leftColX + 160, y, size: 10, font: timesRoman });
       page.drawText(String(meal.fats || 0), { x: leftColX + 240, y, size: 10, font: timesRoman });
       page.drawText(String(meal.carbs || 0), { x: leftColX + 320, y, size: 10, font: timesRoman });
       page.drawText((meal.items || []).join(", "), { x: leftColX + 400, y, size: 10, font: timesRoman });
+
       y -= rowHeight;
+
+      if (y < 50) {
+        page = pdfDoc.addPage([595, 842]);
+        y = 800;
+      }
     });
     y -= 10;
   });
 
-  // ---- Footer ----
-  if (y < 50) page = pdfDoc.addPage([595, 842]); // New page if near bottom
+  // ---- FOOTER ----
+  if (y < 50) page = pdfDoc.addPage([595, 842]);
   page.drawText(`Generated by Laiba Nutritionist — ${new Date().toLocaleString()}`, { x: leftColX, y: 30, size: 9, font: timesRoman, color: rgb(0.4, 0.4, 0.4) });
 
   return pdfDoc.save();
