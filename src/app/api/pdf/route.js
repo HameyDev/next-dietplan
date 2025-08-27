@@ -33,28 +33,25 @@ export async function createPDFBuffer(client) {
   page.drawText(client.name || "-", { x: 200, y: 800, size: 18, font: timesRomanBold, color: rgb(1, 1, 1) });
   y -= 80;
 
-  // ---- CLIENT INFO BOX ----
-const infoBoxHeight = 140;
-page.drawRectangle({ x: leftColX - 10, y: y - infoBoxHeight + 10, width: 515, height: infoBoxHeight, color: rgb(0.95, 0.95, 0.95) });
-page.drawText("Client Information", { x: leftColX, y: y + 20, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
+ // ---- CLIENT INFO BOX ----
+  page.drawRectangle({ x: leftColX - 10, y: y - 10, width: 515, height: 140, color: rgb(0.95, 0.95, 0.95) });
+  page.drawText("Client Information", { x: leftColX, y: y + 100, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
 
-const clientInfo = [
-  ["Name", client.name], ["Age", client.age],
-  ["Gender", client.gender], ["Height", client.height ? client.height + " cm" : "-"],
-  ["Weight", client.weight ? client.weight + " kg" : "-"], ["Goal Weight", client.goalWeight ? client.goalWeight + " kg" : "-"],
-  ["Goal", client.goalType], ["Diet Type", client.dietType],
-  ["Activity", client.activityLevel], ["Timeframe", client.timeframe]
-];
+  const clientInfo = [
+    ["Name", client.name], ["Age", client.age],
+    ["Gender", client.gender], ["Height", client.height ? client.height + " cm" : "-"],
+    ["Weight", client.weight ? client.weight + " kg" : "-"], ["Goal Weight", client.goalWeight ? client.goalWeight + " kg" : "-"],
+    ["Goal", client.goalType], ["Diet Type", client.dietType],
+    ["Activity", client.activityLevel], ["Timeframe", client.timeframe]
+  ];
 
-// Start drawing text **from the top inside the rectangle**
-let infoStartY = y + 10; // a bit below the top of the rectangle
-clientInfo.forEach(([label, val], i) => {
-  const rowY = infoStartY - i * rowHeight;
-  page.drawText(`${label}:`, { x: leftColX, y: rowY, size: 11, font: timesRoman });
-  page.drawText(String(val || "-"), { x: leftColX + 100, y: rowY, size: 11, font: timesRomanBold });
-});
+  clientInfo.forEach(([label, val], i) => {
+    const rowY = y + 80 - i * rowHeight;
+    page.drawText(`${label}:`, { x: leftColX, y: rowY, size: 11, font: timesRoman });
+    page.drawText(String(val || "-"), { x: leftColX + 100, y: rowY, size: 11, font: timesRomanBold });
+  });
 
-y -= infoBoxHeight + 20; // leave some spacing after the box
+  y -= 160;
 
 
   // ---- TARGETS BOX ----
