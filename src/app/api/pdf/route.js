@@ -6,6 +6,8 @@ import { authOptions } from "@/libs/authOptions";
 import dbConnect from "@/libs/dbConnect";
 import Client from "@/models/Client";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fs from "fs";
+import path from "path";
 
 // Helper: Check Y position and add page if needed
 function checkY(pdfDoc, page, y, minY = 100) {
@@ -30,24 +32,54 @@ export async function createPDFBuffer(client) {
   const timesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
   // ---- HEADER ----
-const headerHeight = 80; // taller header for logo + info
-page.drawRectangle({ x: 0, y: pageHeight - headerHeight, width: pageWidth, height: headerHeight, color: rgb(0.2, 0.55, 0.9) });
+const headerHeight = 90; // taller header for logo + info
+page.drawRectangle({
+  x: 0,
+  y: pageHeight - headerHeight,
+  width: pageWidth,
+  height: headerHeight,
+  color: rgb(0.1, 0.45, 0.85), // nicer blue background
+});
 
-// Draw Logo (example: small square for placeholder, replace with actual image later)
-const logoSize = 50;
-// If you have a base64 or Uint8Array of the logo:
-// const logoImage = await pdfDoc.embedPng(logoBytes);
-// page.drawImage(logoImage, { x: leftColX, y: pageHeight - 60, width: logoSize, height: logoSize });
-page.drawRectangle({ x: leftColX, y: pageHeight - 60, width: logoSize, height: logoSize, color: rgb(1, 1, 1) }); // placeholder
+// --- Logo ---
+const logoPath = path.join(process.cwd(), "public", "logo.png");
+const logoBytes = fs.readFileSync(logoPath);
+const logoImage = await pdfDoc.embedPng(logoBytes);
+const logoWidth = 60;
+const logoHeight = 60;
+page.drawImage(logoImage, {
+  x: leftColX,
+  y: pageHeight - logoHeight - 15,
+  width: logoWidth,
+  height: logoHeight,
+});
 
-// Draw Title
-page.drawText("Diet Plan", { x: leftColX + 70, y: pageHeight - 35, size: 24, font: timesRomanBold, color: rgb(1, 1, 1) });
+// --- Title ---
+page.drawText("Diet Plan", {
+  x: leftColX + logoWidth + 15,
+  y: pageHeight - 30,
+  size: 28,
+  font: timesRomanBold,
+  color: rgb(1, 1, 1),
+});
 
-// Draw Your Name
-page.drawText("Dr. Laiba Noor", { x: leftColX + 70, y: pageHeight - 55, size: 16, font: timesRomanBold, color: rgb(1, 1, 1) });
+// --- Doctor Name ---
+page.drawText("Dr. Laiba Noor", {
+  x: leftColX + logoWidth + 15,
+  y: pageHeight - 50,
+  size: 16,
+  font: timesRomanBold,
+  color: rgb(1, 1, 1),
+});
 
-// Draw Instagram Info
-page.drawText("@your_instagram_handle", { x: leftColX + 70, y: pageHeight - 70, size: 12, font: timesRoman, color: rgb(1, 1, 1) });
+// --- Instagram Info ---
+page.drawText("@your_instagram_handle", {
+  x: leftColX + logoWidth + 15,
+  y: pageHeight - 68,
+  size: 12,
+  font: timesRoman,
+  color: rgb(1, 1, 1),
+});
 
 y -= headerHeight + 20;
 
