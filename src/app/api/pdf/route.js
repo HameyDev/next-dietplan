@@ -16,7 +16,6 @@ function checkY(pdfDoc, page, y, minY = 100) {
   return { page, y };
 }
 
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 export async function createPDFBuffer(client) {
   const pdfDoc = await PDFDocument.create();
