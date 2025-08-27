@@ -18,12 +18,13 @@ function checkY(pdfDoc, page, y, minY = 100) {
 
 export async function createPDFBuffer(client) {
   const pdfDoc = await PDFDocument.create();
-  let page = pdfDoc.addPage([595, 842]); // A4 size
-  let y = 800;
-  const leftColX = 40;
-  const rowHeight = 18;
   const pageWidth = 595;
   const pageHeight = 842;
+  let page = pdfDoc.addPage([pageWidth, pageHeight]); // A4
+  let y = pageHeight - 50; // starting y
+  const leftColX = 40;
+  const rightColX = 320;
+  const rowHeight = 18;
 
   const timesRoman = await pdfDoc.embedFont(StandardFonts.TimesRoman);
   const timesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
@@ -33,13 +34,9 @@ export async function createPDFBuffer(client) {
   page.drawRectangle({ x: 0, y: pageHeight - headerHeight, width: pageWidth, height: headerHeight, color: rgb(0.2, 0.55, 0.9) });
   page.drawText("Diet Plan", { x: leftColX, y: pageHeight - 40, size: 24, font: timesRomanBold, color: rgb(1, 1, 1) });
   page.drawText(client.name || "-", { x: leftColX + 160, y: pageHeight - 42, size: 18, font: timesRomanBold, color: rgb(1, 1, 1) });
-  y = pageHeight - headerHeight - 20;
+  y -= headerHeight + 20;
 
-  // ---- CLIENT INFO BOX ----
-  const clientBoxHeight = 150;
-  page.drawRectangle({ x: leftColX - 10, y: y - clientBoxHeight, width: 515, height: clientBoxHeight, color: rgb(0.95, 0.95, 0.95) });
-  page.drawText("Client Information", { x: leftColX, y: y - 20, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
-
+  // ---- CLIENT INFO & TARGETS BOX ----
   const clientInfo = [
     ["Name", client.name], ["Age", client.age],
     ["Gender", client.gender], ["Height", client.height ? client.height + " cm" : "-"],
@@ -48,30 +45,39 @@ export async function createPDFBuffer(client) {
     ["Activity", client.activityLevel], ["Timeframe", client.timeframe]
   ];
 
-  let infoStartY = y - 40; // text starts slightly below box top
-  clientInfo.forEach(([label, val], i) => {
-    const rowY = infoStartY - i * rowHeight;
-    page.drawText(`${label}:`, { x: leftColX, y: rowY, size: 11, font: timesRoman });
-    page.drawText(String(val || "-"), { x: leftColX + 120, y: rowY, size: 11, font: timesRomanBold });
-  });
-  y -= clientBoxHeight + 20;
-
-  // ---- TARGETS BOX ----
-  const targetBoxHeight = 70;
-  page.drawRectangle({ x: leftColX - 10, y: y - targetBoxHeight, width: 515, height: targetBoxHeight, color: rgb(0.9, 0.95, 1) });
-  page.drawText("Targets", { x: leftColX, y: y - 20, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
-
   const targets = [
     ["BMR", client.BMR], ["TDEE", client.TDEE],
     ["Calories", client.dailyCalories], ["Protein", client.proteins],
     ["Fats", client.fats], ["Carbs", client.carbs]
   ];
 
+  const maxRows = Math.max(clientInfo.length, targets.length);
+  const boxHeight = rowHeight * maxRows + 40; // dynamic height
+
+  // Draw background rectangles
+  page.drawRectangle({ x: leftColX - 10, y: y - boxHeight, width: 265, height: boxHeight, color: rgb(0.95, 0.95, 0.95) });
+  page.drawRectangle({ x: rightColX - 10, y: y - boxHeight, width: 265, height: boxHeight, color: rgb(0.9, 0.95, 1) });
+
+  // Titles
+  page.drawText("Client Information", { x: leftColX, y: y - 20, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
+  page.drawText("Targets", { x: rightColX, y: y - 20, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
+
+  // Draw Client Info
+  let clientStartY = y - 40;
+  clientInfo.forEach(([label, val], i) => {
+    const rowY = clientStartY - i * rowHeight;
+    page.drawText(`${label}:`, { x: leftColX, y: rowY, size: 11, font: timesRoman });
+    page.drawText(String(val || "-"), { x: leftColX + 100, y: rowY, size: 11, font: timesRomanBold });
+  });
+
+  // Draw Targets
   let targetStartY = y - 40;
   targets.forEach(([label, val], i) => {
-    page.drawText(`${label}: ${String(val || 0)}`, { x: leftColX + i * 90, y: targetStartY, size: 11, font: timesRoman });
+    const rowY = targetStartY - i * rowHeight;
+    page.drawText(`${label}: ${String(val || 0)}`, { x: rightColX, y: rowY, size: 11, font: timesRoman });
   });
-  y -= targetBoxHeight + 20;
+
+  y -= boxHeight + 20;
 
   // ---- WEEKLY MEAL PLAN ----
   const mealPlan = Array.isArray(client.mealPlan) ? client.mealPlan : [];
@@ -85,8 +91,7 @@ export async function createPDFBuffer(client) {
   y -= rowHeight;
 
   mealPlan.forEach((day, d) => {
-    // Check page break
-    if (y < 80) {
+    if (y < 100) { 
       page = pdfDoc.addPage([pageWidth, pageHeight]);
       y = pageHeight - 50;
     }
@@ -95,7 +100,6 @@ export async function createPDFBuffer(client) {
     y -= rowHeight;
 
     (day.meals || []).forEach((meal, i) => {
-      // Alternate row background
       if (i % 2 === 0) page.drawRectangle({ x: leftColX - 5, y: y - 5, width: 515, height: rowHeight, color: rgb(0.95, 0.95, 1) });
 
       page.drawText(String(meal.mealType || "Meal"), { x: leftColX, y, size: 10, font: timesRoman });
@@ -107,8 +111,7 @@ export async function createPDFBuffer(client) {
 
       y -= rowHeight;
     });
-
-    y -= 10; // spacing between days
+    y -= 10;
   });
 
   // ---- FOOTER ----
