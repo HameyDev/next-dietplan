@@ -33,7 +33,7 @@ export async function createPDFBuffer(client) {
   page.drawText(client.name || "-", { x: 200, y: 800, size: 18, font: timesRomanBold, color: rgb(1, 1, 1) });
   y -= 80;
 
- // ---- CLIENT INFO BOX ----
+  // ---- CLIENT INFO BOX ----
   page.drawRectangle({ x: leftColX - 10, y: y - 10, width: 515, height: 140, color: rgb(0.95, 0.95, 0.95) });
   page.drawText("Client Information", { x: leftColX, y: y + 100, size: 14, font: timesRomanBold, color: rgb(0, 0, 0.3) });
 
@@ -52,7 +52,6 @@ export async function createPDFBuffer(client) {
   });
 
   y -= 160;
-
 
   // ---- TARGETS BOX ----
   page.drawRectangle({ x: leftColX - 10, y: y - 10, width: 515, height: 60, color: rgb(0.9, 0.95, 1) });
@@ -111,7 +110,6 @@ export async function createPDFBuffer(client) {
 
   return pdfDoc.save();
 }
-
 
 export async function GET(req) {
   try {
